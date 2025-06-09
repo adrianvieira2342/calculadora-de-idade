@@ -7,13 +7,13 @@ Original file is located at
     https://colab.research.google.com/drive/1JXtI6njTp5DiP7Ht9qNqfUDdw98sy9uG
 """
 
-import ipywidgets as widgets
-from IPython.display import display
+import streamlit as st
 from datetime import datetime, date
+
+st.title("🧓 Calculadora de Idade Completa")
 
 def calcular_idade_completa(data_nascimento):
     try:
-        # Garante que estamos lidando com datetime
         nascimento = datetime.combine(data_nascimento, datetime.min.time())
         agora = datetime.now()
         delta = agora - nascimento
@@ -36,25 +36,13 @@ def calcular_idade_completa(data_nascimento):
     except Exception as e:
         return f"Ocorreu um erro: {str(e)}"
 
-output = widgets.Output()
-date_picker = widgets.DatePicker(
-    description='Data:',
-    disabled=False
-)
-botao = widgets.Button(description="Calcular Idade")
+# Interface com Streamlit
+data_nascimento = st.date_input("Selecione sua data de nascimento:")
 
-def on_click(b):
-    output.clear_output()
-    if date_picker.value:
-        resposta = calcular_idade_completa(date_picker.value)
-        with output:
-            print(f"Você: {date_picker.value.strftime('%d/%m/%Y')}")
-            print(f"Bot: {resposta}\n")
+if st.button("Calcular Idade"):
+    if data_nascimento:
+        st.markdown(f"**Você nasceu em:** {data_nascimento.strftime('%d/%m/%Y')}")
+        resultado = calcular_idade_completa(data_nascimento)
+        st.success(resultado)
     else:
-        with output:
-            print("Por favor, selecione uma data.")
-
-
-botao.on_click(on_click)
-
-display(date_picker, botao, output)
+        st.warning("Por favor, selecione uma data.")
